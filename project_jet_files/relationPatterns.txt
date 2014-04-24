@@ -1,0 +1,11 @@
+//
+//  Patterns for relationships
+//
+
+pattern set relation;
+
+relation		:= 
+
+
+
+when relation    write Person1 + "," + Relationship + "," + Person2;
