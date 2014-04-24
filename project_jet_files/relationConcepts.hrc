@@ -1,3 +1,5 @@
+cRelation words son, daughter, mother, father, sister, brother, wife, husband, cousin, nephew, niece
+
 //Needs to be rewritten : sample from the appointment pattern concepts:
 //cAppoint isa cEvent
 //cAppointment isa cEvent
