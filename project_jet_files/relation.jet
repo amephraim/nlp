@@ -1,0 +1,11 @@
+# JET properties file
+Jet.dataPath	     = data/project_jet_files
+EnglishLex.fileName1 = Jet4.dict
+Tags.fileName	     = pos_hmm.txt
+NameTags.fileName    = MUCnameHMM.txt
+Concepts.fileName    = relationConcepts.hrc
+Pattern.fileName1    = chunkPatternsPA_mod.txt
+Pattern.fileName2    = relationPatterns.txt
+JetTest.fileName     = bk2_ch1.txt
+#
+processSentence  = tokenize, lexLookup, pruneTags, tagNames, pat(names), pat(chunks), pat(relation)

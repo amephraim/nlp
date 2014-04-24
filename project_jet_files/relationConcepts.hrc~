@@ -1,0 +1,5 @@
+cAppoint isa cEvent
+cAppointment isa cEvent
+cAppoint words appoint, name, select, promote
+cAppointment words appointment, promotion, selection
+cCompany words company
