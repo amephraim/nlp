@@ -1,7 +1,10 @@
+import nltk
 
-from nltk.corpus import PlaintextCorpusReader
 
-load_file(fname):
-	corpus_root='project_jet_files'
-	wordlists = PlaintextCorpusReader(corpus_root,'.*')
 
+if __name__=="__main__":
+	rawtext = open("tester.txt").read() 
+	sentences = nltk.sent_tokenize(rawtext) # NLTK default sentence segmenter 
+	sentences = [nltk.word_tokenize(sent) for sent in sentences] # NLTK word tokenizer 
+	sentences = [nltk.pos_tag(sent) for sent in sentences] # NLTK POS tagger
+	print "ok"
