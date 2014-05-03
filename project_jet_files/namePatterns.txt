@@ -1163,6 +1163,7 @@ male-name :=
 "Jeshua"|
 "Jesus"|
 "Josiah"|
+"Josias"|
 "Josibiah"|
 "Josiphiah"|
 "Jotham"|
