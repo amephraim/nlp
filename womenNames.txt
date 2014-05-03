@@ -170,4 +170,4 @@
 "Zelelponi"|
 "Zillah"|
 "Zilpah"|
-"Zipporah"|
+"Zipporah";
