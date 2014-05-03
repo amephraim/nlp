@@ -1,11 +1,11 @@
 # JET properties file
 Jet.dataPath	     = data/project_jet_files
+JetTest.fileName1    = trainer.txt
 EnglishLex.fileName1 = Jet4.dict
 Tags.fileName	     = pos_hmm.txt
 NameTags.fileName    = MUCnameHMM.txt
-Concepts.fileName    = relationConcepts.hrc
-Pattern.fileName1    = chunkPatternsPA_mod.txt
-Pattern.fileName2    = relationPatterns.txt
-JetTest.fileName     = trainer.txt
-#
-processSentence  = tokenize, lexLookup, pruneTags, tagNames, pat(chunks), pat(relation)
+Pattern.fileName1    = namePatterns.txt
+Pattern.fileName2    = chunkPatterns.txt
+Pattern.fileName3    = relationPatterns.txt
+
+processSentence  = tokenize, lexLookup, pruneTags, tagNames, pat(name), pat(chunks), pat(relation)
