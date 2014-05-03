@@ -1,0 +1,36 @@
+//
+//  Patterns for relationship events
+//
+
+pattern set relation;
+
+relation := father-of ;
+
+person := ([constit cat=malename]|[constit cat=femalename]):Person2;
+people := (person "and" person):Persons;
+family := [constit cat=malename]:Father "begat" person "of" [constit cat=femalename]:Mother; 
+spouse := [constit cat=malename]:Husband "was" "espoused" "to" [constit cat=femalename]:Wife | 
+		[constit cat=femalename]:Wife "was" "espoused" "to" [constit cat=malename]:Husband;	
+
+
+brother := [constit cat=malename]:Brother "the" "brother" "of" person;
+sister := [constit cat=malename]:Sister "the" "sister" "of" person;
+
+father-of := [constit cat=malename]:Father "begat" person;
+father-of-two := [constit cat=malename]:Father "begat" people; 
+
+when father-of write Father + "was the father of " + Person2;
+when father-of-two write Father + "was the father of " + Persons;
+when family write Father + "was the father of " + Person2 +"\n" +
+                  Mother + "was the mother of " + Person2;
+when spouse write Wife + "was the wife of " + Husband;
+when brother write Brother + "was the brother of " + Person2;
+when sister write Sister + "was the sister of " + Person2;
+
+
+
+
+//rel := [constit cat=malename]:Son "which" "was" "the" "son" "of" [constit cat=malename]:Father rel_suffix?;
+//rel_suffix := "which" "was" "the" "son" "of"  [constit cat=malename]:Father2 rel_suffix?;
+//when rel write Father + "was the father of " + Son; 
+
