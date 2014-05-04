@@ -1,71 +1,101 @@
 import nltk
+import collections
+import re
 
+class extractBible:
+	def __init__(self):
+		self.malenames=collections.defaultdict(list)
+		self.femalenames=collections.defaultdict(list)
+		self.catches = []
+	
+	def readMaleNames(self):
+		with open('menNames.txt') as m:
+			for l in m:
+				self.malenames[l[0]].append(l.strip())
+	
+	def readFemaleNames(self):
+		with open('womenNames.txt') as m:
+			for l in m:
+				self.femalenames[l[0]].append(l.strip())
+	
+	
+	def namePattern(self,sent):
+		words = sent.split()
+		tagNames = []
+		for word in words:
+			if word in self.malenames[word[0]]:
+				sent = sent.replace(word,"<Man>%s"%word)
+				tagNames.append(word)
+			elif word in self.femalenames[word[0]]:
+				sent = sent.replace(word,"<Woman>%s"%word)
+				tagNames.append(word)
+		return sent,tagNames
+	
+	def begatPattern(self,sent,tagNames):
+		print sent
+# 		Father pattern catches David the king type
+		fatherpattern = re.compile(".*<Man>[A-Z][a-z]+.* begat <Man>[A-Z][a-z].*")
+		motherpattern = re.compile(".*<Woman>[A-Z][a-z]+ begat <Man>[A-Z][a-z].*")
+		if fatherpattern.match(sent):
+			father = tagNames[0]
+			child = tagNames[1]
+			self.write("%s is the father of %s"%(father,child))
+						
+		elif motherpattern.match(sent):
+			mother = tagNames[0]
+			child = tagNames[1]
+			self.write("%s is the mother of %s"%(mother,child))
+			
+	def begatOfPattern(self,sent,tagNames):
+		familypattern = re.compile(".* <Man>[A-Z][a-z]+ begat <Man>[A-Z][a-z]+ of <Woman>[A-Z][a-z].*")
+		if familypattern.match(sent):
+			father = tagNames[0]
+			child = tagNames[1]
+			mother = tagNames[2]
+			self.write("%s is the father of %s"%(father,child))
+			self.write("%s is the mother of %s"%(mother,child))
+			return True
+	
+	def begatManyPattern(self,sent,tagNames):
+		manypattern = re.compile(".* <Man>[A-Z][a-z]+ begat <Man>[A-Z][a-z]+ and <Man>[A-Z][a-z]+.*")
+		if manypattern.match(sent):
+			self.write("%s is the father of %s"%(tagNames[0],tagNames[1]))
+			self.write("%s is the father of %s"%(tagNames[0],tagNames[2]))
+				
+	def write(self,text):
+# 		print text
+		self.catches.append(text)	
 
+def cleanClause(clause):
+	words = clause.split()
+	for word in words:
+		word = word.strip()
+		word = word.strip('\t')
+	sentence = " ".join(words)
+	return sentence
 
 if __name__=="__main__":
-	rawtext = open("tester.txt").read() 
-	sentences = nltk.sent_tokenize("Mr. and Mrs. Dursley with their father Harry Potter") # NLTK default sentence segmenter 
-	sentences = [nltk.word_tokenize(sent) for sent in sentences] # NLTK word tokenizer 
-	sentences = [nltk.pos_tag(sent) for sent in sentences] # NLTK POS tagger
-	grammar = """ 
- 		NP:	{<NNP>+} 
- 		REL: {<NN>} 
-		"""
-
-# 	grammar = """
-# 		//  pattern set for noun and verb groups
-# 
-# pattern set chunks;
-# 
-# //  patterns for noun groups
-# 
-# ng := 		det-pos? <JJ>* <NN> |
-# 		proper-noun |
-# 		[constit cat=pro];
-# 
-# det-pos	    :=	[constit cat=det] |
-# 		[constit cat=det]? [constit cat=n number=singular] "'s";
-# 
-# proper-noun :=	[ENAMEX] ;
-# 
-# when ng        add [ngroup];
-# 
-# //  patterns for active verb groups
-# 
-# vg :=		[constit cat=tv] |
-# 		[constit cat=w] vg-inf |
-# 		tv-vbe vg-ving;
-# 
-# vg-inf :=	[constit cat=v] |
-# 		"be" vg-ving;
-# 
-# vg-ven :=	[constit cat=ven] |
-# 		"been" vg-ving;
-# 
-# vg-ving :=	[constit cat=ving];
-# 
-# tv-vbe :=	"is" | "are" | "was" | "were";
-# 
-# when vg		add [constit cat=vgroup];
-# 
-# //  patterns for passive verb groups
-# 
-# vg-pass :=	tv-vbe [constit cat=ven] |
-# 		[constit cat=w] "be" [constit cat=ven];
-# 
-# when vg-pass	add [constit cat=vgroup-pass];
-# 
-# //  pattern for infinitival verb groups
-# 
-# to-vg :=	vg-inf;	
-# 	"""
-# 	cp = nltk.parse_cfg(grammar)
-# 	parser = nltk.ChartParser(cp)
-# 	result=parser.nbest_parse(sentences[0])
-
-	cp = nltk.RegexpParser(grammar)
-	chunked = cp.parse(sentences[0])
-	for n in chunked:
-		if isinstance(n,nltk.tree.Tree):
-			if n.node == 'REL':
-				print n
+	b = extractBible()
+	b.readMaleNames()
+	b.readFemaleNames()
+# 	rawtext = "Abraham begat Issac"
+	rawtext = open("trainer.txt").read() 
+# 	rawtext= "40:001:002 Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren;"
+	sentences = rawtext.replace(",",".").replace(";",".")
+	clauses= sentences.split(".")
+	for sent in clauses:
+		sent = cleanClause(sent)
+		sent,tagNames = b.namePattern(sent)
+		b.begatOfPattern(sent,tagNames)
+		b.begatManyPattern(sent,tagNames)
+		b.begatPattern(sent,tagNames)
+	seen = set()
+	seen_add = seen.add
+	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
+	with open ("results2.txt","w") as r:
+		for c in catches:
+			print c
+			r.write("%s\n"%c)
+		
+	
+	
