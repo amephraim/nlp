@@ -35,21 +35,27 @@ class extractBible:
 
 		foundFatherPattern = re.findall(fatherpattern, sent)
 		for match in foundFatherPattern:
+			print "begatPattern(father): " 
+			print match 
 			father = match[0]
 			child = match[1]
 			self.write("%s is the father of %s"%(father,child))
 	
 		foundMotherPattern = re.findall(motherpattern, sent)	
 		for match in foundMotherPattern:
+			print "begatPattern(mother): " 
+			print match 
 			mother = match[0]
 			child = match[1]	
 			self.write("%s is the mother of %s"%(mother,child))			
 			
 	def begatOfPattern(self,sent):
-		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
+		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat .*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
 
 		foundFamilyPattern = re.findall(familypattern, sent)
 		for match in foundFamilyPattern:
+			print "begatOfPattern: " 
+			print match 
 			father = match[0]
 			child = match[1]
 			mother =match[2]
@@ -61,6 +67,8 @@ class extractBible:
 
 		foundManyPattern = re.findall(manypattern, sent)
 		for match in foundManyPattern:
+			print "begatManyPattern: " 
+			print match 
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
 				
@@ -81,7 +89,7 @@ if __name__=="__main__":
 	b = extractBible()
 	b.readMaleNames()
 	b.readFemaleNames()
-	#rawtext = "Abraham begat Issac"
+	#rawtext = "And Judas begat Phares and Zara of Thamar; And Isaac begat Jacob of Thamar;"
 	rawtext = open("trainer.txt").read() 
  	#rawtext= "40:001:002 Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and Park of Ruth;"
 	sentences = rawtext.replace(";",".")

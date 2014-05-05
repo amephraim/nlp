@@ -1,9 +1,9 @@
 Abraham is the father of Isaac
 Isaac is the father of Jacob
 Jacob is the father of Judas
-Judas is the father of Phares
-Thamar is the mother of Phares
 Judas is the father of Zara
+Thamar is the mother of Zara
+Judas is the father of Phares
 Phares is the father of Esrom
 Esrom is the father of Aram
 Aram is the father of Aminadab
