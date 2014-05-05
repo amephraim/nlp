@@ -1,4 +1,6 @@
 
+from __future__ import division
+import nltk
 import collections
 import re
 
@@ -50,7 +52,7 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))			
 			
 	def begatOfPattern(self,sent):
-		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat .*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
+		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat.*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
 
 		foundFamilyPattern = re.findall(familypattern, sent)
 		for match in foundFamilyPattern:
@@ -76,8 +78,6 @@ class extractBible:
 
 		foundManyPattern = re.findall(manypattern, sent)
 		for match in foundManyPattern:
-			print "begatManyPattern: " 
-			print match 
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
 				
@@ -101,42 +101,8 @@ if __name__=="__main__":
 	b = extractBible()
 	b.readMaleNames()
 	b.readFemaleNames()
-	rawtext = """3:23 And Jesus himself began to be about thirty years of age, being
-(as was supposed) the son of Joseph, which was the son of Heli, 3:24
-Which was the son of Matthat, which was the son of Levi, which was the
-son of Melchi, which was the son of Janna, which was the son of
-Joseph, 3:25 Which was the son of Mattathias, which was the son of
-Amos, which was the son of Naum, which was the son of Esli, which was
-the son of Nagge, 3:26 Which was the son of Maath, which was the son
-of Mattathias, which was the son of Semei, which was the son of
-Joseph, which was the son of Juda, 3:27 Which was the son of Joanna,
-which was the son of Rhesa, which was the son of Zorobabel, which was
-the son of Salathiel, which was the son of Neri, 3:28 Which was the
-son of Melchi, which was the son of Addi, which was the son of Cosam,
-which was the son of Elmodam, which was the son of Er, 3:29 Which was
-the son of Jose, which was the son of Eliezer, which was the son of
-Jorim, which was the son of Matthat, which was the son of Levi, 3:30
-Which was the son of Simeon, which was the son of Juda, which was the
-son of Joseph, which was the son of Jonan, which was the son of
-Eliakim, 3:31 Which was the son of Melea, which was the son of Menan,
-which was the son of Mattatha, which was the son of Nathan, which was
-the son of David, 3:32 Which was the son of Jesse, which was the son
-of Obed, which was the son of Booz, which was the son of Salmon, which
-was the son of Naasson, 3:33 Which was the son of Aminadab, which was
-the son of Aram, which was the son of Esrom, which was the son of
-Phares, which was the son of Juda, 3:34 Which was the son of Jacob,
-which was the son of Isaac, which was the son of Abraham, which was
-the son of Thara, which was the son of Nachor, 3:35 Which was the son
-of Saruch, which was the son of Ragau, which was the son of Phalec,
-which was the son of Heber, which was the son of Sala, 3:36 Which was
-the son of Cainan, which was the son of Arphaxad, which was the son of
-Sem, which was the son of Noe, which was the son of Lamech, 3:37 Which
-was the son of Mathusala, which was the son of Enoch, which was the
-son of Jared, which was the son of Maleleel, which was the son of
-Cainan, 3:38 Which was the son of Enos, which was the son of Seth,
-which was the son of Adam, which was the son of God."""
-#	rawtext = open("trainer.txt").read() 
- 	#rawtext= "40:001:002 Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and Park of Ruth;"
+ 	rawtext = open("trainer.txt").read() 
+ 	#rawtext= "40:001:011 And Josias begat Jechonias and his brethren about the time they were carried away to Babylon; 40:001:012 And after they were brought to Babylon Jechonias begat Salathiel"
 	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
@@ -148,11 +114,40 @@ which was the son of Adam, which was the son of God."""
 		b.recursivePattern(sent, tagNames)
 	seen = set()
 	seen_add = seen.add
-	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
-	#with open ("results2.txt","w") as r:
-	for c in catches:
-		print c
-			#r.write("%s\n"%c)
-		
+	catches = [ x for x in b.catches if x not in seen and not seen_add(x)]
+	#with open ("results.txt","w") as r:
+	#	for c in catches:
+	#		#print c
+	#		r.write("%s\n"%c)
+	corrects = []
+	numCorrect = 0
+	with open("correct.txt", 'r') as correctFile:
+		for c in correctFile:
+			corrects.append(c.strip("\n"))
+
+	print "*****[Relations Missed]****"
+	for correct in corrects:
+		if correct not in catches:
+			print correct
+
+	print "***[Incorrect Relations]***"
+	for catch in catches:
+		if catch not in corrects:
+			print catch
+		else:
+			numCorrect+=1
+
+	numInKey = len(corrects)
+	numInResponse = len(catches)
+
+	precision = numCorrect/numInResponse
+	recall = numCorrect/numInKey 
+	fmeasure = 2/(1/recall + 1/precision)
+	print "***[Evaluation Summary]***"
+	print "Precision\t" + str(precision)
+	print "Recall\t\t" + str(recall)
+	print "fmeasure\t" + str(fmeasure)
+
+	
 	
 	
