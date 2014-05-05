@@ -173,7 +173,7 @@ if __name__=="__main__":
 	b.readMaleNames()
 	b.readFemaleNames()
 	
-	rawtext = open("gen5").read() 
+	rawtext = open("trainer.txt").read() 
 	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
@@ -193,7 +193,7 @@ if __name__=="__main__":
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
 	for c in catches:
 		print c
-	testing(catches,"gen5correct")
+	testing(catches,"correctAnsa.txt")
 # 	#with open ("results2.txt","w") as r:
 # 	for c in catches:
 # 		print c
