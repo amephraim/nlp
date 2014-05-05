@@ -1,6 +1,4 @@
-
 from __future__ import division
-import nltk
 import collections
 import re
 
@@ -52,7 +50,7 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))			
 			
 	def begatOfPattern(self,sent):
-		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat.*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
+		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat .*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
 
 		foundFamilyPattern = re.findall(familypattern, sent)
 		for match in foundFamilyPattern:
@@ -63,8 +61,9 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))
 
 	def recursivePattern(self,sent,tagNames):
-
-		recpattern = re.compile(".* <Man ([A-Z][a-z]+)>.* the son of <Man ([A-Z][a-z]+)>.* (which|Which was the son of <Man ([A-Z][a-z]+)>.*)*.*")
+		print sent
+# 		recpattern = re.compile(".* <Man ([A-Z][a-z]+)>.* the son of <Man ([A-Z][a-z]+)>.* (which|Which was the son of <Man ([A-Z][a-z]+)>.*)*.*")
+		recpattern = re.compile(".* <Man ([A-Z][a-z]+)>.* the son of <Man ([A-Z][a-z]+)>.*( which|Which was the son of <Man ([A-Z][a-z]+)>)+")
 		if recpattern.match(sent):
 			j=1
 			for i in xrange(len(tagNames)-1):
@@ -75,16 +74,43 @@ class extractBible:
 		
 	def begatManyPattern(self,sent):
 		manypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
-
 		foundManyPattern = re.findall(manypattern, sent)
 		for match in foundManyPattern:
+			print "begatManyPattern: " 
+			print match 
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
-				
+	
+	def aposPattern(self,sent):
+		pass
+	
+	
 	def write(self,text):
 # 		print text
 		self.catches.append(text)	
 
+	def espousePattern(self,sent):
+		espousepattern = re.compile("<Woman ([A-Z][a-z]+)> was espoused to <Man ([A-Z][a-z]+)>")
+		espousewife = re.findall(espousepattern,sent)
+		for match in espousewife:
+			self.write("%s is the wife of %s"%(match[0],match[1]))
+		husbandpattern = re.compile("<Man ([A-Z][a-z]+)> the husband of <Woman ([A-Z][a-z]+)>")
+		husbandwife = re.findall(husbandpattern,sent)
+		for match in husbandwife:
+			self.write("%s is the wife of %s"%(match[1],match[0]))
+	
+	def sonofPattern(self,sent):
+		sonpattern = re.compile("<Man ([A-Z][a-z]+)> the? son of <Man ([A-Z][a-z]+)>")
+		foundson = re.findall(sonpattern,sent)
+		for match in foundson:
+			self.write("%s is the father of %s"%(match[1],match[0]))
+	
+	def daughterofPattern(self,sent):
+		daughterpattern = re.compile("<Woman ([A-Z][a-z]+)> the? daughter of <Man ([A-Z][a-z]+)>")
+		founddaughter = re.findall(daughterpattern,sent)
+		for match in founddaughter:
+			self.write("%s is the father of %s"%(match[1],match[0]))
+		
 def cleanClause(sent):
 	nopattern = re.compile("[1-9][0-9]*:[1-9][0-9]")
 	words = sent.split()
@@ -101,8 +127,8 @@ if __name__=="__main__":
 	b = extractBible()
 	b.readMaleNames()
 	b.readFemaleNames()
- 	rawtext = open("trainer.txt").read() 
- 	#rawtext= "40:001:011 And Josias begat Jechonias and his brethren about the time they were carried away to Babylon; 40:001:012 And after they were brought to Babylon Jechonias begat Salathiel"
+
+	rawtext = open("gen4.txt").read() 
 	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
@@ -112,18 +138,22 @@ if __name__=="__main__":
 		b.begatManyPattern(sent)
 		b.begatPattern(sent)
 		b.recursivePattern(sent, tagNames)
+		b.espousePattern(sent)
+		b.sonofPattern(sent)
+		b.daughterofPattern(sent)
 	seen = set()
 	seen_add = seen.add
-	catches = [ x for x in b.catches if x not in seen and not seen_add(x)]
-	#with open ("results.txt","w") as r:
-	#	for c in catches:
-	#		#print c
-	#		r.write("%s\n"%c)
-	corrects = []
+	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
+# 	#with open ("results2.txt","w") as r:
+# 	for c in catches:
+# 		print c
+# 			#r.write("%s\n"%c)
+# 		
+	corrects = set()
 	numCorrect = 0
-	with open("correct.txt", 'r') as correctFile:
+	with open("correctGen4.txt", 'r') as correctFile:
 		for c in correctFile:
-			corrects.append(c.strip("\n"))
+			corrects.add(c.strip("\n"))
 
 	print "*****[Relations Missed]****"
 	for correct in corrects:
@@ -147,7 +177,4 @@ if __name__=="__main__":
 	print "Precision\t" + str(precision)
 	print "Recall\t\t" + str(recall)
 	print "fmeasure\t" + str(fmeasure)
-
-	
-	
 	
