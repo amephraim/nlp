@@ -3,6 +3,7 @@ Abiud is the father of Eliakim
 Abraham is the father of Isaac
 Achaz is the father of Ezekias
 Achim is the father of Eliud
+Adam is the father of Seth
 Aminadab is the father of Naasson
 Amon is the father of Josias
 Aram is the father of Aminadab
@@ -40,7 +41,9 @@ Ruth is the mother of Obed
 Sadoc is the father of Achim
 Salathiel is the father of Zorobabel
 Salmon is the father of Booz
+Seth is the father of Enosh
 Solomon is the father of Roboam
 Thamar is the mother of Phares
 Thamar is the mother of Zara
 Zorobabel is the father of Abiud
+

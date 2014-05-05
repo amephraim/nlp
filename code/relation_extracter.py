@@ -61,7 +61,6 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))
 
 	def recursivePattern(self,sent,tagNames):
-		print sent
 # 		recpattern = re.compile(".* <Man ([A-Z][a-z]+)>.* the son of <Man ([A-Z][a-z]+)>.* (which|Which was the son of <Man ([A-Z][a-z]+)>.*)*.*")
 		recpattern = re.compile(".* <Man ([A-Z][a-z]+)>.* the son of <Man ([A-Z][a-z]+)>.*( which|Which was the son of <Man ([A-Z][a-z]+)>)+")
 		if recpattern.match(sent):
@@ -73,15 +72,17 @@ class extractBible:
 				j=j+1
 		
 	def begatManyPattern(self,sent):
-		manypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
-		foundManyPattern = re.findall(manypattern, sent)
-		for match in foundManyPattern:
-			print "begatManyPattern: " 
-			print match 
+		twopattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
+		foundtwoPattern = re.findall(twopattern, sent)
+		threepattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)> and <Man ([A-Z][a-z]+)>")
+		foundthreePattern = re.findall(threepattern, sent)
+		for match in foundtwoPattern:
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
-	
-		
+		for match in foundthreePattern:
+			self.write("%s is the father of %s"%(match[0],match[1]))
+			self.write("%s is the father of %s"%(match[0],match[2]))
+			self.write("%s is the father of %s"%(match[0],match[3]))	
 	
 	
 	def write(self,text):
@@ -108,7 +109,21 @@ class extractBible:
 		daughterpattern = re.compile("<Woman ([A-Z][a-z]+)> the? daughter of <Man ([A-Z][a-z]+)>")
 		founddaughter = re.findall(daughterpattern,sent)
 		for match in founddaughter:
+			print sent
 			self.write("%s is the father of %s"%(match[1],match[0]))
+	
+	def barePattern(self,sent):
+		barePattern1 = re.compile("<Woman ([A-Z][a-z]+)> bare to <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)>")
+		foundBare = re.findall(barePattern1,sent)
+		for match in foundBare:
+			self.write("%s is the mother of %s"%(match[0],match[1]))
+	
+	def becamefatherPattern(self,sent):
+		sp = re.compile(".*<Man ([A-Z][a-z]+)> .* begat a? son? <Man ([A-Z][a-z]+)>")
+		spm = re.findall(sp,sent)
+		print sent
+		for match in spm:
+			self.write("%s is the father of %s"%(match[0],match[1]))
 		
 def cleanClause(sent):
 	nopattern = re.compile("[1-9][0-9]*:[1-9][0-9]")
@@ -118,13 +133,14 @@ def cleanClause(sent):
 		word = word.strip('\t')
 		if nopattern.match(word):
 			words[index] = ""
+		words[index] = word.split(":")[0]
 	sentence = " ".join(words)
 	return sentence
 
-def testing(catches):
+def testing(catches,fname):
 	corrects = set()
 	numCorrect = 0
-	with open("correct.txt", 'r') as correctFile:
+	with open(fname, 'r') as correctFile:
 		for c in correctFile:
 			corrects.add(c.strip("\n"))
 
@@ -157,7 +173,7 @@ if __name__=="__main__":
 	b.readMaleNames()
 	b.readFemaleNames()
 	
-	rawtext = open("gen36").read() 
+	rawtext = open("gen5").read() 
 	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
@@ -170,10 +186,14 @@ if __name__=="__main__":
 		b.espousePattern(sent)
 		b.sonofPattern(sent)
 		b.daughterofPattern(sent)
+		b.becamefatherPattern(sent)
+		
 	seen = set()
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
-	testing(catches)
+	for c in catches:
+		print c
+	testing(catches,"gen5correct")
 # 	#with open ("results2.txt","w") as r:
 # 	for c in catches:
 # 		print c
