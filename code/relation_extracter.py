@@ -61,7 +61,7 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))
 
 	def recursivePattern(self,sent,tagNames):
-		recpattern = re.compile(".* <Man>[A-Z][a-z].* the son of <Man>[A-Z][a-z] (which|Which was the son of <Man>[A-Z][a-z])*.*")
+		recpattern = re.compile(".* <Man>[A-Z][a-z].* the son of <Man>[A-Z][a-z].* (which|Which was the son of <Man>[A-Z][a-z])*.*")
 		if recpattern.match(sent):
 			j=1
 			for i in xrange(len(tagNames)-1):
