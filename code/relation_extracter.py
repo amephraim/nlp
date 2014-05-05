@@ -25,10 +25,12 @@ class extractBible:
 		for index,word in enumerate(words):
 			if word in self.malenames[word[0]]:
 				words[index] = "<Man %s>"%word
+				tagNames.append(word)
 			elif word in self.femalenames[word[0]]:
 				words[index] = "<Woman %s>"%word
+				tagNames.append(word)
 		sent = " ".join(words)
-		return sent
+		return sent,tagNames
 	
 	def begatPattern(self,sent):
 # 		Father pattern catches David the king type
@@ -37,16 +39,12 @@ class extractBible:
 
 		foundFatherPattern = re.findall(fatherpattern, sent)
 		for match in foundFatherPattern:
-			print "begatPattern(father): " 
-			print match 
 			father = match[0]
 			child = match[1]
 			self.write("%s is the father of %s"%(father,child))
 	
 		foundMotherPattern = re.findall(motherpattern, sent)	
 		for match in foundMotherPattern:
-			print "begatPattern(mother): " 
-			print match 
 			mother = match[0]
 			child = match[1]	
 			self.write("%s is the mother of %s"%(mother,child))			
@@ -56,8 +54,6 @@ class extractBible:
 
 		foundFamilyPattern = re.findall(familypattern, sent)
 		for match in foundFamilyPattern:
-			print "begatOfPattern: " 
-			print match 
 			father = match[0]
 			child = match[1]
 			mother =match[2]
@@ -65,7 +61,7 @@ class extractBible:
 			self.write("%s is the mother of %s"%(mother,child))
 
 	def recursivePattern(self,sent,tagNames):
-		recpattern = re.compile(".* <Man>[A-Z][a-z].* the son of <Man>[A-Z][a-z] (which|Which was the son of <Man>[A-Z][a-z])*.*")
+		recpattern = re.compile(".* <Man>[A-Z][a-z]+ .* the son of <Man>[A-Z][a-z]+ .* (which|Which was the son of <Man>[A-Z][a-z]+)* .*")
 		if recpattern.match(sent):
 			j=1
 			for i in xrange(len(tagNames)-1):
@@ -144,10 +140,11 @@ which was the son of Adam, which was the son of God."""
 	clauses= sentences.split(".")
 	for sent in clauses:
 		sent = cleanClause(sent)
-		sent = b.namePattern(sent)
+		sent,tagNames = b.namePattern(sent)
 		b.begatOfPattern(sent)
 		b.begatManyPattern(sent)
 		b.begatPattern(sent)
+		b.recursivePattern(sent, tagNames)
 	seen = set()
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
