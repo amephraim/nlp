@@ -80,7 +80,11 @@ class extractBible:
 			print match 
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
-				
+	
+	def aposPattern(self,sent):
+		pass
+	
+	
 	def write(self,text):
 # 		print text
 		self.catches.append(text)	
@@ -145,11 +149,11 @@ if __name__=="__main__":
 # 		print c
 # 			#r.write("%s\n"%c)
 # 		
-	corrects = []
+	corrects = set()
 	numCorrect = 0
 	with open("correct.txt", 'r') as correctFile:
 		for c in correctFile:
-			corrects.append(c.strip("\n"))
+			corrects.add(c.strip("\n"))
 
 	print "*****[Relations Missed]****"
 	for correct in corrects:
