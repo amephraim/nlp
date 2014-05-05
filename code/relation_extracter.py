@@ -150,8 +150,8 @@ which was the son of Adam, which was the son of God."""
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
 	#with open ("results2.txt","w") as r:
-		for c in catches:
-			print c
+	for c in catches:
+		print c
 			#r.write("%s\n"%c)
 		
 	
