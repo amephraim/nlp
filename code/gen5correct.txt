@@ -1,0 +1,12 @@
+Adam is the father of Seth
+Seth is the father of Enos
+Enos is the father of Cainan
+Cainan is the father of Mahalaleel
+Mahalaleel is the father of Jared
+Jared is the father of Enoch
+Enoch is the father of Methuselah
+Methuselah is the father of Lamech
+Lamech is the father of Noah
+Noah is the father of Ham
+Noah is the father of Shem
+Noah is the father of Japheth
