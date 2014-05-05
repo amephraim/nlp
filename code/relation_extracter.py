@@ -1,4 +1,4 @@
-
+from __future__ import division
 import collections
 import re
 
@@ -124,7 +124,7 @@ if __name__=="__main__":
 	b.readMaleNames()
 	b.readFemaleNames()
 
-	rawtext = open("gen36").read() 
+	rawtext = open("trainer.txt").read() 
 	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
@@ -140,10 +140,37 @@ if __name__=="__main__":
 	seen = set()
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
-	#with open ("results2.txt","w") as r:
-	for c in catches:
-		print c
-			#r.write("%s\n"%c)
-		
-	
+# 	#with open ("results2.txt","w") as r:
+# 	for c in catches:
+# 		print c
+# 			#r.write("%s\n"%c)
+# 		
+	corrects = []
+	numCorrect = 0
+	with open("correct.txt", 'r') as correctFile:
+		for c in correctFile:
+			corrects.append(c.strip("\n"))
+
+	print "*****[Relations Missed]****"
+	for correct in corrects:
+		if correct not in catches:
+			print correct
+
+	print "***[Incorrect Relations]***"
+	for catch in catches:
+		if catch not in corrects:
+			print catch
+		else:
+			numCorrect+=1
+
+	numInKey = len(corrects)
+	numInResponse = len(catches)
+
+	precision = numCorrect/numInResponse
+	recall = numCorrect/numInKey 
+	fmeasure = 2/(1/recall + 1/precision)
+	print "***[Evaluation Summary]***"
+	print "Precision\t" + str(precision)
+	print "Recall\t\t" + str(recall)
+	print "fmeasure\t" + str(fmeasure)
 	
