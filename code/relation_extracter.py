@@ -81,8 +81,7 @@ class extractBible:
 			self.write("%s is the father of %s"%(match[0],match[1]))
 			self.write("%s is the father of %s"%(match[0],match[2]))
 	
-	def aposPattern(self,sent):
-		pass
+		
 	
 	
 	def write(self,text):
@@ -122,33 +121,7 @@ def cleanClause(sent):
 	sentence = " ".join(words)
 	return sentence
 
-if __name__=="__main__":
-
-	b = extractBible()
-	b.readMaleNames()
-	b.readFemaleNames()
-
-	rawtext = open("trainer.txt").read() 
-	sentences = rawtext.replace(";",".")
-	clauses= sentences.split(".")
-	for sent in clauses:
-		sent = cleanClause(sent)
-		sent,tagNames = b.namePattern(sent)
-		b.begatOfPattern(sent)
-		b.begatManyPattern(sent)
-		b.begatPattern(sent)
-		b.recursivePattern(sent, tagNames)
-		b.espousePattern(sent)
-		b.sonofPattern(sent)
-		b.daughterofPattern(sent)
-	seen = set()
-	seen_add = seen.add
-	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
-# 	#with open ("results2.txt","w") as r:
-# 	for c in catches:
-# 		print c
-# 			#r.write("%s\n"%c)
-# 		
+def testing(catches):
 	corrects = set()
 	numCorrect = 0
 	with open("correct.txt", 'r') as correctFile:
@@ -177,4 +150,34 @@ if __name__=="__main__":
 	print "Precision\t" + str(precision)
 	print "Recall\t\t" + str(recall)
 	print "fmeasure\t" + str(fmeasure)
+	
+if __name__=="__main__":
+
+	b = extractBible()
+	b.readMaleNames()
+	b.readFemaleNames()
+	
+	rawtext = open("gen36").read() 
+	sentences = rawtext.replace(";",".")
+	clauses= sentences.split(".")
+	for sent in clauses:
+		sent = cleanClause(sent)
+		sent,tagNames = b.namePattern(sent)
+		b.begatOfPattern(sent)
+		b.begatManyPattern(sent)
+		b.begatPattern(sent)
+		b.recursivePattern(sent, tagNames)
+		b.espousePattern(sent)
+		b.sonofPattern(sent)
+		b.daughterofPattern(sent)
+	seen = set()
+	seen_add = seen.add
+	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
+	testing(catches)
+# 	#with open ("results2.txt","w") as r:
+# 	for c in catches:
+# 		print c
+# 			#r.write("%s\n"%c)
+# 		
+	
 	
