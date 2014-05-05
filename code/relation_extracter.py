@@ -21,46 +21,48 @@ class extractBible:
 	
 	def namePattern(self,sent):
 		words = sent.split()
-		tagNames = []
 		for word in words:
 			if word in self.malenames[word[0]]:
-				sent = sent.replace(word,"<Man>%s"%word)
-				tagNames.append(word)
+				sent = sent.replace(word,"<Man %s>"%word)
 			elif word in self.femalenames[word[0]]:
-				sent = sent.replace(word,"<Woman>%s"%word)
-				tagNames.append(word)
-		return sent,tagNames
+				sent = sent.replace(word,"<Woman %s>"%word)
+		return sent
 	
-	def begatPattern(self,sent,tagNames):
-		print sent
+	def begatPattern(self,sent):
 # 		Father pattern catches David the king type
-		fatherpattern = re.compile(".*<Man>[A-Z][a-z]+.* begat <Man>[A-Z][a-z].*")
-		motherpattern = re.compile(".*<Woman>[A-Z][a-z]+ begat <Man>[A-Z][a-z].*")
-		if fatherpattern.match(sent):
-			father = tagNames[0]
-			child = tagNames[1]
+		fatherpattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
+		motherpattern = re.compile("<Woman ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
+
+		foundFatherPattern = re.findall(fatherpattern, sent)
+		for match in foundFatherPattern:
+			father = match[0]
+			child = match[1]
 			self.write("%s is the father of %s"%(father,child))
-						
-		elif motherpattern.match(sent):
-			mother = tagNames[0]
-			child = tagNames[1]
-			self.write("%s is the mother of %s"%(mother,child))
-			
-	def begatOfPattern(self,sent,tagNames):
-		familypattern = re.compile(".* <Man>[A-Z][a-z]+ begat <Man>[A-Z][a-z]+ of <Woman>[A-Z][a-z].*")
-		if familypattern.match(sent):
-			father = tagNames[0]
-			child = tagNames[1]
-			mother = tagNames[2]
-			self.write("%s is the father of %s"%(father,child))
-			self.write("%s is the mother of %s"%(mother,child))
-			return True
 	
-	def begatManyPattern(self,sent,tagNames):
-		manypattern = re.compile(".* <Man>[A-Z][a-z]+ begat <Man>[A-Z][a-z]+ and <Man>[A-Z][a-z]+.*")
-		if manypattern.match(sent):
-			self.write("%s is the father of %s"%(tagNames[0],tagNames[1]))
-			self.write("%s is the father of %s"%(tagNames[0],tagNames[2]))
+		foundMotherPattern = re.findall(motherpattern, sent)	
+		for match in foundMotherPattern:
+			mother = match[0]
+			child = match[1]	
+			self.write("%s is the mother of %s"%(mother,child))			
+			
+	def begatOfPattern(self,sent):
+		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
+
+		foundFamilyPattern = re.findall(familypattern, sent)
+		for match in foundFamilyPattern:
+			father = match[0]
+			child = match[1]
+			mother =match[2]
+			self.write("%s is the father of %s"%(father,child))
+			self.write("%s is the mother of %s"%(mother,child))
+	
+	def begatManyPattern(self,sent):
+		manypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
+
+		foundManyPattern = re.findall(manypattern, sent)
+		for match in foundManyPattern:
+			self.write("%s is the father of %s"%(match[0],match[1]))
+			self.write("%s is the father of %s"%(match[0],match[2]))
 				
 	def write(self,text):
 # 		print text
@@ -75,20 +77,21 @@ def cleanClause(clause):
 	return sentence
 
 if __name__=="__main__":
+
 	b = extractBible()
 	b.readMaleNames()
 	b.readFemaleNames()
-# 	rawtext = "Abraham begat Issac"
+	#rawtext = "Abraham begat Issac"
 	rawtext = open("trainer.txt").read() 
-# 	rawtext= "40:001:002 Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren;"
-	sentences = rawtext.replace(",",".").replace(";",".")
+ 	#rawtext= "40:001:002 Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and Park of Ruth;"
+	sentences = rawtext.replace(";",".")
 	clauses= sentences.split(".")
 	for sent in clauses:
 		sent = cleanClause(sent)
-		sent,tagNames = b.namePattern(sent)
-		b.begatOfPattern(sent,tagNames)
-		b.begatManyPattern(sent,tagNames)
-		b.begatPattern(sent,tagNames)
+		sent = b.namePattern(sent)
+		b.begatOfPattern(sent)
+		b.begatManyPattern(sent)
+		b.begatPattern(sent)
 	seen = set()
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
