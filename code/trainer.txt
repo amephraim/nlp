@@ -1,8 +1,3 @@
-<DOC>
-Mathew 1:1
-
-<TEXT>
-Book 40        Matthew
 
 40:001:001 The book of the generation of Jesus Christ, the son of David,
            the son of Abraham.
@@ -35,7 +30,7 @@ Book 40        Matthew
            begat Josias;
 
 40:001:011 And Josias begat Jechonias and his brethren, about the time
-           they were carried away to Babylon:
+           they were carried away to Babylon;
 
 40:001:012 And after they were brought to Babylon, Jechonias begat
            Salathiel; and Salathiel begat Zorobabel;
@@ -64,7 +59,7 @@ Book 40        Matthew
 40:001:019 Then Joseph her husband, being a just man, and not willing to
            make her a publick example, was minded to put her away
            privily.
-
+correc
 40:001:020 But while he thought on these things, behold, the angel of the
            LORD appeared unto him in a dream, saying, Joseph, thou son of
            David, fear not to take unto thee Mary thy wife: for that
@@ -85,11 +80,4 @@ Book 40        Matthew
 
 40:001:025 And knew her not till she had brought forth her firstborn son:
            and he called his name JESUS.
-
-And Jesus himself began to be about thirty years of age, being (as was supposed) Jesus, the son of Joseph, which was the son of Heli,
-
-24 Which was the son of Matthat, which was the son of Levi, which was the son of Melchi, which was the son of Janna, which was the son of Joseph,
-
-</TEXT>
-</DOC>
 
