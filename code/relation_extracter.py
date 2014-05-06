@@ -94,10 +94,22 @@ class extractBible:
 		espousewife = re.findall(espousepattern,sent)
 		for match in espousewife:
 			self.write("%s is the wife of %s"%(match[0],match[1]))
+
 		husbandpattern = re.compile("<Man ([A-Z][a-z]+)> the husband of <Woman ([A-Z][a-z]+)>")
 		husbandwife = re.findall(husbandpattern,sent)
 		for match in husbandwife:
 			self.write("%s is the wife of %s"%(match[1],match[0]))
+
+		wifepattern = re.compile("<Man ([A-Z][a-z]+)>.+ <Woman ([A-Z][a-z]+)> his wife")
+		foundWifePattern = re.findall(wifepattern, sent)
+		for match in foundWifePattern:
+			self.write("%s is the wife of %s"%(match[1], match[0]))
+
+		wifepattern = re.compile("<Man ([A-Z][a-z]+)>.+ wives.* <Woman ([A-Z][a-z]+)> and <Woman ([A-Z][a-z]+)>")
+		foundWifePattern = re.findall(wifepattern, sent)
+		for match in foundWifePattern:
+			self.write("%s is the wife of %s"%(match[1], match[0]))
+			self.write("%s is the wife of %s"%(match[2], match[0]))
 	
 	def sonofPattern(self,sent):
 		sonpattern = re.compile("<Man ([A-Z][a-z]+)> the? son of <Man ([A-Z][a-z]+)>")
@@ -113,6 +125,7 @@ class extractBible:
 			self.write("%s is the father of %s"%(match[1],match[0]))
 	
 	def barePattern(self,sent):
+		#Error???
 		barePattern1 = re.compile("<Woman ([A-Z][a-z]+)> bare to <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)>")
 		foundBare = re.findall(barePattern1,sent)
 		for match in foundBare:
@@ -124,6 +137,41 @@ class extractBible:
 		print sent
 		for match in spm:
 			self.write("%s is the father of %s"%(match[0],match[1]))
+
+	def brotherofPattern(self, sent):
+		brotherPattern = re.compile("<Man ([A-Z][a-z]+)>.+ <Man ([A-Z][a-z]+)> his brother")
+		foundbrother = re.findall(brotherPattern,sent)
+		for match in foundbrother:
+			self.write("%s is the brother of %s"%(match[0], match[1]))
+
+	def sisterofPattern(self, sent):
+		sisterPattern = re.compile("sister of <Man ([A-Z][a-z]+)> was <Woman ([A-Z][a-z]+)>")
+		foundsister = re.findall(sisterPattern,sent)
+		for match in foundsister:
+			self.write("%s is the sister of %s"%(match[1], match[0]))
+
+	def fatherofPattern(self, sent):
+		fatherPattern = re.compile("<Man ([A-Z][a-z]+)> knew .*bare.* name? <Man ([A-Z][a-z]+)>")
+		foundfather = re.findall(fatherPattern,sent)
+		for match in foundfather:
+			self.write("%s is the father of %s"%(match[0], match[1]))
+
+		fatherPattern = re.compile("unto <Man ([A-Z][a-z]+)> was born <Man ([A-Z][a-z]+)>")
+		foundfather = re.findall(fatherPattern,sent)
+		for match in foundfather:
+			self.write("%s is the father of %s"%(match[0], match[1]))
+
+		fatherPattern = re.compile("to <Man ([A-Z][a-z]+)>.* was born.* name? <Man ([A-Z][a-z]+)>")
+		foundfather = re.findall(fatherPattern,sent)
+		for match in foundfather:
+			self.write("%s is the father of %s"%(match[0], match[1]))
+
+	def motherofPattern(self, sent):
+		motherPattern = re.compile("<Woman ([A-Z][a-z]+)>.* bare <Man ([A-Z][a-z]+)>")
+		foundmother = re.findall(motherPattern,sent)
+		for match in foundmother:
+			self.write("%s is the mother of %s"%(match[0],match[1]))
+
 		
 def cleanClause(sent):
 	nopattern = re.compile("[1-9][0-9]*:[1-9][0-9]")
@@ -174,9 +222,9 @@ if __name__=="__main__":
 	b.readFemaleNames()
 	
 
-	rawtext = open("trainer.txt").read()
-	
-	sentences = rawtext.replace(";",".")
+	rawtext = open("gen4.txt").read()
+	#sentences = rawtext.replace(";",".")
+	sentences = rawtext.replace(":", "")
 	clauses= sentences.split(".")
 	for sent in clauses:
 		sent = cleanClause(sent)
@@ -189,13 +237,17 @@ if __name__=="__main__":
 		b.sonofPattern(sent)
 		b.daughterofPattern(sent)
 		b.becamefatherPattern(sent)
+		b.brotherofPattern(sent)
+		b.fatherofPattern(sent)
+		b.motherofPattern(sent)
+		b.sisterofPattern(sent)
 		
 	seen = set()
 	seen_add = seen.add
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
 	for c in catches:
 		print c
-	testing(catches,"correct3.txt")
+	testing(catches,"correctGen4.txt")
 # 	#with open ("results2.txt","w") as r:
 # 	for c in catches:
 # 		print c
