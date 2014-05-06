@@ -1,0 +1,39 @@
+Shem is the father of Arphaxad
+Arphaxad is the father of Salah
+Salah is the father of Eber
+Eber is the father of Peleg
+Peleg is the father of Reu
+Reu is the father of Serug
+Serug is the father of Nahor
+Nahor is the father of Terah
+Terah is the father of Abram
+Terah is the father of Nahor
+Terah is the father of Haran
+Haran is the father of Lot
+Haran is the father of Milcah 
+Haran is the father of Iscah
+Sarai is the wife of Abram
+Milcah is the wife of Nahor
+Haran is the father of Milcah
+Shealtiel is the father of Zerubbabel
+Josedech is the father of Joshua
+Shaphan is the father of Ahikam
+Ahikam is the father of Gedaliah
+Nethaniah is the father of Ishmael
+Kareah is the father of Johanan
+Kareah is the father of Jonathan
+Tanhumeth is the father of Seraiah
+David is the father of Josiah
+Azaliah is the father of Shaphan
+Shaphan is the father of Ahikam
+Joahaz is the father of Joah
+Merari is the father of Jahath
+Merari is the father of Obadiah
+Micah is the father of Abdon
+Hasrah is the father of Tikvath
+Tikvath is the father of Shallum
+Huldah is the wife of Shallum
+
+
+
+

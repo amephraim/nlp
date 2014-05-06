@@ -236,7 +236,7 @@ if __name__=="__main__":
 	b.readMaleNames()
 	b.readFemaleNames()
 
-	rawtext = open("trainer.txt").read()
+	rawtext = open("tester.txt").read()
 
 	sentences = rawtext.split(".")
 	for sent in sentences:
@@ -262,7 +262,7 @@ if __name__=="__main__":
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
 	for c in catches:
 		print c
-	testing(catches,"correct3.txt")
+	testing(catches,"testkey.txt")
 # 	#with open ("results2.txt","w") as r:
 # 	for c in catches:
 # 		print c
