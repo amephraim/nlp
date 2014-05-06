@@ -22,12 +22,16 @@ class extractBible:
 		sent = sent.replace(",","")
 		words = sent.split()
 		tagNames = []
+		smc=""
 		for index,word in enumerate(words):
+			if ":" in word:
+				smc = ":"	
+			word=word.split(":")[0]
 			if word in self.malenames[word[0]]:
-				words[index] = "<Man %s>"%word
+				words[index] = "<Man %s>%s"%(word,smc)
 				tagNames.append(word)
 			elif word in self.femalenames[word[0]]:
-				words[index] = "<Woman %s>"%word
+				words[index] = "<Woman %s>%s"%(word,smc)
 				tagNames.append(word)
 		sent = " ".join(words)
 		return sent,tagNames
@@ -181,7 +185,6 @@ def cleanClause(sent):
 		word = word.strip('\t')
 		if nopattern.match(word):
 			words[index] = ""
-		words[index] = word.split(":")[0]
 	sentence = " ".join(words)
 	return sentence
 
@@ -222,7 +225,7 @@ if __name__=="__main__":
 	b.readFemaleNames()
 	
 
-	rawtext = open("gen4.txt").read()
+	rawtext = open("trainer.txt").read()
 	#sentences = rawtext.replace(";",".")
 	sentences = rawtext.replace(":", "")
 	clauses= sentences.split(".")
@@ -247,7 +250,7 @@ if __name__=="__main__":
 	catches= [ x for x in b.catches if x not in seen and not seen_add(x)]
 	for c in catches:
 		print c
-	testing(catches,"correctGen4.txt")
+	testing(catches,"correct3.txt")
 # 	#with open ("results2.txt","w") as r:
 # 	for c in catches:
 # 		print c
