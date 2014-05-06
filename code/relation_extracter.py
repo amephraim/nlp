@@ -24,9 +24,13 @@ class extractBible:
 		tagNames = []
 		smc=""
 		for index,word in enumerate(words):
-			if ":" in word:
+			smc=""
+			if word.find(":") != -1:
 				smc = ":"	
+			if word.find(";") != -1:
+				smc = ";"
 			word=word.split(":")[0]
+			word = word.split(";")[0]
 			if word in self.malenames[word[0]]:
 				words[index] = "<Man %s>%s"%(word,smc)
 				tagNames.append(word)
@@ -37,21 +41,25 @@ class extractBible:
 		return sent,tagNames
 	
 	def begatPattern(self,sent):
-# 		Father pattern catches David the king type
-		fatherpattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
-		motherpattern = re.compile("<Woman ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
+		sents = sent.split(":")
+		for sent in sents:
+# 			Father pattern catches David the king type
+			fatherpattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
+			motherpattern = re.compile("<Woman ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>")
 
-		foundFatherPattern = re.findall(fatherpattern, sent)
-		for match in foundFatherPattern:
-			father = match[0]
-			child = match[1]
-			self.write("%s is the father of %s"%(father,child))
+			foundFatherPattern = re.findall(fatherpattern, sent)
+			#print "***begatPattern***"
+			#print foundFatherPattern
+			for match in foundFatherPattern:
+				father = match[0]
+				child = match[1]
+				self.write("%s is the father of %s"%(father,child))
 	
-		foundMotherPattern = re.findall(motherpattern, sent)	
-		for match in foundMotherPattern:
-			mother = match[0]
-			child = match[1]	
-			self.write("%s is the mother of %s"%(mother,child))			
+			foundMotherPattern = re.findall(motherpattern, sent)	
+			for match in foundMotherPattern:
+				mother = match[0]
+				child = match[1]	
+				self.write("%s is the mother of %s"%(mother,child))			
 			
 	def begatOfPattern(self,sent):
 		familypattern = re.compile("<Man ([A-Z][a-z]+)>.* begat .*<Man ([A-Z][a-z]+)>.* of <Woman ([A-Z][a-z]+)>")
@@ -76,17 +84,23 @@ class extractBible:
 				j=j+1
 		
 	def begatManyPattern(self,sent):
-		twopattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
-		foundtwoPattern = re.findall(twopattern, sent)
-		threepattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)> and <Man ([A-Z][a-z]+)>")
-		foundthreePattern = re.findall(threepattern, sent)
-		for match in foundtwoPattern:
-			self.write("%s is the father of %s"%(match[0],match[1]))
-			self.write("%s is the father of %s"%(match[0],match[2]))
-		for match in foundthreePattern:
-			self.write("%s is the father of %s"%(match[0],match[1]))
-			self.write("%s is the father of %s"%(match[0],match[2]))
-			self.write("%s is the father of %s"%(match[0],match[3]))	
+		sents = sent.split(":")
+		for sent in sents:
+			twopattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)>.* and <Man ([A-Z][a-z]+)>")
+			foundtwoPattern = re.findall(twopattern, sent)
+			threepattern = re.compile("<Man ([A-Z][a-z]+)>.* begat <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)> and <Man ([A-Z][a-z]+)>")
+			foundthreePattern = re.findall(threepattern, sent)
+			#print "***begatManyPattern2***"
+			#print foundtwoPattern
+			#print "***begatManyPattern3***"
+			#print foundthreePattern
+			for match in foundtwoPattern:
+				self.write("%s is the father of %s"%(match[0],match[1]))
+				self.write("%s is the father of %s"%(match[0],match[2]))
+			for match in foundthreePattern:
+				self.write("%s is the father of %s"%(match[0],match[1]))
+				self.write("%s is the father of %s"%(match[0],match[2]))
+				self.write("%s is the father of %s"%(match[0],match[3]))	
 	
 	
 	def write(self,text):
@@ -128,13 +142,6 @@ class extractBible:
 			print sent
 			self.write("%s is the father of %s"%(match[1],match[0]))
 	
-	def barePattern(self,sent):
-		#Error???
-		barePattern1 = re.compile("<Woman ([A-Z][a-z]+)> bare to <Man ([A-Z][a-z]+)> <Man ([A-Z][a-z]+)>")
-		foundBare = re.findall(barePattern1,sent)
-		for match in foundBare:
-			self.write("%s is the mother of %s"%(match[0],match[1]))
-	
 	def becamefatherPattern(self,sent):
 		sp = re.compile(".*<Man ([A-Z][a-z]+)> .* begat a? son? <Man ([A-Z][a-z]+)>")
 		spm = re.findall(sp,sent)
@@ -155,7 +162,12 @@ class extractBible:
 			self.write("%s is the sister of %s"%(match[1], match[0]))
 
 	def fatherofPattern(self, sent):
-		fatherPattern = re.compile("<Man ([A-Z][a-z]+)> knew .*bare.* name? <Man ([A-Z][a-z]+)>")
+		fatherPattern = re.compile("<Man ([A-Z][a-z]+)> knew.+ bare <Man ([A-Z][a-z]+)>")
+		foundfather = re.findall(fatherPattern,sent)
+		for match in foundfather:
+			self.write("%s is the father of %s"%(match[0], match[1]))
+
+		fatherPattern = re.compile("<Man ([A-Z][a-z]+)> knew.+ bare .* name? <Man ([A-Z][a-z]+)>")
 		foundfather = re.findall(fatherPattern,sent)
 		for match in foundfather:
 			self.write("%s is the father of %s"%(match[0], match[1]))
@@ -223,27 +235,27 @@ if __name__=="__main__":
 	b = extractBible()
 	b.readMaleNames()
 	b.readFemaleNames()
-	
 
 	rawtext = open("trainer.txt").read()
-	#sentences = rawtext.replace(";",".")
-	sentences = rawtext.replace(":", "")
-	clauses= sentences.split(".")
-	for sent in clauses:
+
+	sentences = rawtext.split(".")
+	for sent in sentences:
 		sent = cleanClause(sent)
 		sent,tagNames = b.namePattern(sent)
-		b.begatOfPattern(sent)
-		b.begatManyPattern(sent)
-		b.begatPattern(sent)
-		b.recursivePattern(sent, tagNames)
 		b.espousePattern(sent)
-		b.sonofPattern(sent)
 		b.daughterofPattern(sent)
 		b.becamefatherPattern(sent)
 		b.brotherofPattern(sent)
 		b.fatherofPattern(sent)
 		b.motherofPattern(sent)
 		b.sisterofPattern(sent)
+		b.sonofPattern(sent)
+		clauses = sent.split(";")
+		for clause in clauses:
+			b.begatOfPattern(clause)
+			b.begatManyPattern(clause)
+			b.begatPattern(clause)
+			b.recursivePattern(clause, tagNames)
 		
 	seen = set()
 	seen_add = seen.add
